@@ -1,0 +1,47 @@
+---
+title: "Parastichopus parvimenesis - Migrate-n"
+output: html_notebook
+---
+
+This notebook will document a migrate-n analysis that I ran for *Parastichopus parvimensis*. I am working with Alison Haupt who received reviewer comments on a manuscript that urged her to do a migrate-n analysis.
+
+First, the FASTA file taxon names are a bit funky, so I did some quick grepping in Textwrangler to distinguish taxon numbers from locality names:
+
+Find: _(\d\d)$
+Replace: -\1
+
+Now taxon numbers are separated by a "-" while locality names can include "_"
+
+```{r, message=F, echo=F}
+library(stringr)
+library(strataG)
+```
+
+Read in the data and check alignment:
+```{r}
+ppar<-read.FASTA("Ppar.fasta")
+image.DNAbin(ppar)
+```
+
+Pop off the population names, make a quick haplotype network. Looks pretty panmictic...
+
+```{r}
+pop<-gsub(names(ppar),pattern = "-\\d+",replacement="")
+
+d <- dist.dna(ppar)
+h <- pegas::haplotype(ppar)
+h <- sort(h, what = "label")
+
+net <- pegas::haploNet(h)
+i<-stack(setNames(attr(h, "index"), rownames(h)))
+i<-i[order(i$values),]
+ind.hap<-table(hap=i$ind, pop=pop)
+
+#play with scale.ratio to get appropriate branch lengths
+plot(net,size=attr(net, "freq"), scale.ratio=10, pie=ind.hap,legend=F, labels=F,threshold=0, show.mutation=2)
+
+plot.new()
+legend("topleft", colnames(ind.hap), col=rainbow(ncol(ind.hap)), pch=19, ncol=2)
+
+```
+
