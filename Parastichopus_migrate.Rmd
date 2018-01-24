@@ -1,14 +1,16 @@
 ---
 title: "Parastichopus parvimenesis - Migrate-n"
-output: html_notebook
+output: 
+  html_notebook:
+      toc: true
 ---
 
 This notebook will document a migrate-n analysis that I ran for *Parastichopus parvimensis*. I am working with Alison Haupt who received reviewer comments on a manuscript that urged her to do a migrate-n analysis.
 
 First, the FASTA file taxon names are a bit funky, so I did some quick grepping in Textwrangler to distinguish taxon numbers from locality names:
 
-Find: _(\d\d)$
-Replace: -\1
+Find: "_(\d\d)$"  
+Replace: "-\\1"
 
 Now taxon numbers are separated by a "-" while locality names can include "_"
 
@@ -87,6 +89,7 @@ TiTvRatio(ppar)
 ```
 So we will use those numbers in our parmfiles
 
+# Parmfile
 Here is our parmfile: I will leave this be until I talk about migration models with 
 ```{Bash}
 ################################################################################
@@ -156,6 +159,4 @@ end
 
 ```
 
-```{r}
-a<-phyclust::read.fasta("Ppar.fasta")
-write.phylip(a,"Ppar.mig")
+Wrote out the data as nexus format and edited it manually to migrate format.
