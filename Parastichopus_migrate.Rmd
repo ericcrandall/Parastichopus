@@ -156,3 +156,6 @@ end
 
 ```
 
+```{r}
+a<-phyclust::read.fasta("Ppar.fasta")
+write.phylip(a,"Ppar.mig")
