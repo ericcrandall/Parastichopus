@@ -15,13 +15,17 @@ Now taxon numbers are separated by a "-" while locality names can include "_"
 ```{r, message=F, echo=F}
 library(stringr)
 library(strataG)
+library(phangorn)
+library(phyclust)
 ```
 
+## Read and check data
 Read in the data and check alignment:
 ```{r}
 ppar<-read.FASTA("Ppar.fasta")
 image.DNAbin(ppar)
 ```
+
 
 Pop off the population names, make a quick haplotype network. Looks pretty panmictic...
 
@@ -42,6 +46,113 @@ plot(net,size=attr(net, "freq"), scale.ratio=10, pie=ind.hap,legend=F, labels=F,
 
 plot.new()
 legend("topleft", colnames(ind.hap), col=rainbow(ncol(ind.hap)), pch=19, ncol=2)
+
+```
+
+## Run Modeltest
+```{r}
+ppar_phy<-phyDat(ppar)
+#ppar_modeltest<-modelTest(ppar_phy,G=T, I=F)  - commented out because it takes awhile to run, so just load in the results.
+ppar_modeltest<-load("modeltest_out.R")
+ppar_modeltest<-ppar_modeltest[order(ppar_modeltest$BIC),]
+ppar_modeltest
+```
+
+K80 is the best model, which is close enough to F84 and HKY that migrate uses. We will take the Gamma shape parameter from the HKY model
+
+```{r}
+# some funky code to get the gamma shape parameter
+env<-attr(ppar_modeltest, "env")
+HKY<-get("HKY+G", env)
+eval(HKY, env=env)
+
+```
+
+The shape parameter is: 0.203
+
+So the gamma distribution looks like this:
+
+```{r}
+plot(density(rgamma(1000,shape=0.10879)), xlim=c(0,0.5))
+```
+Using migrate-n to discretize that gamma into four categories we get:
+
+rates=4: 0.333841 1.589418 3.974628 8.077175 
+prob-rates=4: 0.561404 0.391364 0.046548 0.000684 
+
+And the transition/transversion ratio is:
+
+```{r}
+TiTvRatio(ppar)
+```
+So we will use those numbers in our parmfiles
+
+Here is our parmfile: I will leave this be until I talk about migration models with 
+```{Bash}
+################################################################################
+# Parmfile for Migrate 3.6.4 [do not remove these first TWO lines]
+menu=NO
+nmlength=10
+datatype=SequenceData
+ttratio= 3.43
+freqs-from-data=YES
+seqerror-rate=0.0
+categories=1
+rates=4: 0.333841 1.589418 3.974628 8.077175 
+prob-rates=4: 0.561404 0.391364 0.046548 0.000684 
+autocorrelation=NO
+weights=NO
+interleaved=NO
+fast-likelihood=NO
+inheritance-scalars={1}
+population-relabel={1 1 1 1}
+usertree=RANDOMTREE
+infile=../Ppar.mig
+random-seed=AUTO
+title=celtal_CI_Bird
+progress=YES
+logfile=NO
+print-data=NO
+outfile=celtal_CI_Bird_outfile.txt
+pdf-outfile=celtal_CI_Bird_outfile.pdf
+use-M=YES
+plot=NO
+mathfile=mathfile
+profile=ALL:QUICK
+print-tree=NONE
+write-summary=NO
+aic-modeltest=NO
+mig-histogram=NO
+skyline=NO
+theta=own:{0.01}
+migration=own:{1000}
+mutation=CONSTANT
+fst-type=THETA
+custom-migration={*}
+geo=NO
+bayes-update=YES
+bayes-updatefreq=0.500000
+bayes-posteriorbins=500 500
+bayes-posteriormaxtype=ALL
+bayes-file=YES:bayesfile
+bayes-allfile=YES:1:bayesallfile
+bayes-proposals= THETA METROPOLIS Sampler
+bayes-proposals= MIG SLICE Sampler
+bayes-priors= THETA WEXPPRIOR: 0.0 0.01 0.1000000 0.01000 
+bayes-priors= MIG WEXPPRIOR: 0.000100 100000.000000 50000000.000000 100000.000000 
+long-chains=1
+long-inc=100
+long-sample=50000
+burn-in=20000
+heating=YES:1:{1,1.5,3,100000}
+heated-swap=YES
+moving-steps=NO
+long-chain-epsilon=INFINITY
+gelman-convergence=No
+replicate=YES:3
+resistance=0.000100
+end
+
 
 ```
 
