@@ -1,0 +1,66 @@
+################################################################################
+# Parmfile for Migrate 3.6.4 [do not remove these first TWO lines]
+menu=NO
+nmlength=10
+datatype=SequenceData
+ttratio= 3.43
+freqs-from-data=YES
+seqerror-rate=0.0
+categories=1
+rates=4: 0.333841 1.589418 3.974628 8.077175 
+prob-rates=4: 0.561404 0.391364 0.046548 0.000684 
+autocorrelation=NO
+weights=NO
+interleaved=NO
+fast-likelihood=NO
+inheritance-scalars={1}
+population-relabel={1 1 1 1 1 1 1 1 1 1 1 1 1 2 2}
+usertree=RANDOMTREE
+infile=../Ppar.mig
+random-seed=AUTO
+title=Parastichopus parvimensis
+progress=YES
+logfile=NO
+print-data=NO
+outfile=parastichopus_outfile.txt
+pdf-outfile=parastichopus_outfile.pdf
+use-M=YES
+plot=NO
+mathfile=mathfile
+profile=ALL:QUICK
+print-tree=NONE
+write-summary=NO
+aic-modeltest=NO
+mig-histogram=NO
+skyline=NO
+theta=own:{0.01}
+migration=own:{1000}
+mutation=CONSTANT
+fst-type=THETA
+custom-migration={
+*s
+s*
+}
+geo=NO
+bayes-update=YES
+bayes-updatefreq=0.500000
+bayes-posteriorbins=500 500
+bayes-posteriormaxtype=ALL
+bayes-file=YES:bayesfile
+bayes-allfile=YES:1:bayesallfile
+bayes-proposals= THETA METROPOLIS Sampler
+bayes-proposals= MIG SLICE Sampler
+bayes-priors= THETA WEXPPRIOR: 0.0 0.01 0.1000000 0.01000 
+bayes-priors= MIG WEXPPRIOR: 0.000100 100000.000000 50000000.000000 100000.000000 
+long-chains=1
+long-inc=100
+long-sample=75000
+burn-in=20000
+heating=YES:1:{1,1.5,3,100000}
+heated-swap=YES
+moving-steps=NO
+long-chain-epsilon=INFINITY
+gelman-convergence=No
+replicate=YES:3
+resistance=0.000100
+end

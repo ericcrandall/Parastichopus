@@ -51,6 +51,9 @@ legend("topleft", colnames(ind.hap), col=rainbow(ncol(ind.hap)), pch=19, ncol=2)
 
 ```
 
+Wrote out the data as nexus format and edited it manually to migrate format.
+
+
 ## Run Modeltest
 ```{r}
 ppar_phy<-phyDat(ppar)
@@ -89,8 +92,80 @@ TiTvRatio(ppar)
 ```
 So we will use those numbers in our parmfiles
 
-# Parmfile
-Here is our parmfile: I will leave this be until I talk about migration models with 
+## Parmfile
+
+### Migration Models
+
+Symmetric gene flow
+1. Panmixia
+
+\*
+
+2. Island Model
+
+m	m	m	m	m	m	m	m	m	m	m	m	m	m	m  
+m	m	m	m	m	m	m	m	m	m	m	m	m	m	m  
+m	m	m	m	m	m	m	m	m	m	m	m	m	m	m  
+m	m	m	m	m	m	m	m	m	m	m	m	m	m	m  
+m	m	m	m	m	m	m	m	m	m	m	m	m	m	m  
+m	m	m	m	m	m	m	m	m	m	m	m	m	m	m  
+m	m	m	m	m	m	m	m	m	m	m	m	m	m	m  
+m	m	m	m	m	m	m	m	m	m	m	m	m	m	m  
+m	m	m	m	m	m	m	m	m	m	m	m	m	m	m  
+m	m	m	m	m	m	m	m	m	m	m	m	m	m	m  
+m	m	m	m	m	m	m	m	m	m	m	m	m	m	m  
+m	m	m	m	m	m	m	m	m	m	m	m	m	m	m  
+m	m	m	m	m	m	m	m	m	m	m	m	m	m	m  
+m	m	m	m	m	m	m	m	m	m	m	m	m	m	m  
+m	m	m	m	m	m	m	m	m	m	m	m	m	m	m  
+
+3. Stepping-Stone
+
+\*	s	0	0	0	0	0	0	0	0	0	0	0	0	0  
+s	*	s	0	0	0	0	0	0	0	0	0	0	0	0  
+0	s	*	s	0	0	0	0	0	0	0	0	0	0	0  
+0	0	s	*	s	0	0	0	0	0	0	0	0	0	0  
+0	0	0	s	*	s	0	0	0	0	0	0	0	0	0  
+0	0	0	0	s	*	s	0	0	0	0	0	0	0	0  
+0	0	0	0	0	s	*	s	0	0	0	0	0	0	0  
+0	0	0	0	0	0	s	*	s	0	0	0	0	0	0  
+0	0	0	0	0	0	0	s	*	s	0	0	0	0	0  
+0	0	0	0	0	0	0	0	s	*	s	0	0	0	0  
+0	0	0	0	0	0	0	0	0	s	*	s	0	0	0  
+0	0	0	0	0	0	0	0	0	0	s	*	s	0	0  
+0	0	0	0	0	0	0	0	0	0	0	s	*	s	0  
+0	0	0	0	0	0	0	0	0	0	0	0	s	*	s  
+0	0	0	0	0	0	0	0	0	0	0	0	0	s	*  
+
+4. Stepping-stone -South dispersal
+
+\*	0	0	0	0	0	0	0	0	0	0	0	0	0	0  
+*	*	0	0	0	0	0	0	0	0	0	0	0	0	0  
+0	*	*	0	0	0	0	0	0	0	0	0	0	0	0  
+0	0	*	*	0	0	0	0	0	0	0	0	0	0	0  
+0	0	0	*	*	0	0	0	0	0	0	0	0	0	0  
+0	0	0	0	*	*	0	0	0	0	0	0	0	0	0  
+0	0	0	0	0	*	*	0	0	0	0	0	0	0	0  
+0	0	0	0	0	0	*	*	0	0	0	0	0	0	0  
+0	0	0	0	0	0	0	*	*	0	0	0	0	0	0  
+0	0	0	0	0	0	0	0	*	*	0	0	0	0	0  
+0	0	0	0	0	0	0	0	0	*	*	0	0	0	0  
+0	0	0	0	0	0	0	0	0	0	*	*	0	0	0  
+0	0	0	0	0	0	0	0	0	0	0	*	*	0	0  
+0	0	0	0	0	0	0	0	0	0	0	0	*	*	0  
+0	0	0	0	0	0	0	0	0	0	0	0	0	*	* 
+
+5. 2region1 - Two populations, Everything vs PQ+PCB
+
+\* s  
+s *  
+
+5. 2region2 - Two populations, Everything vs. PCE, PQ, PCB
+
+\* s  
+s *  
+
+### Parmfile
 ```{Bash}
 ################################################################################
 # Parmfile for Migrate 3.6.4 [do not remove these first TWO lines]
@@ -108,16 +183,16 @@ weights=NO
 interleaved=NO
 fast-likelihood=NO
 inheritance-scalars={1}
-population-relabel={1 1 1 1}
+population-relabel={1 1 1 1 1 1 1 1 1 1 1 1 1 1 1}
 usertree=RANDOMTREE
 infile=../Ppar.mig
 random-seed=AUTO
-title=celtal_CI_Bird
+title=Parastichopus parvimensis
 progress=YES
 logfile=NO
 print-data=NO
-outfile=celtal_CI_Bird_outfile.txt
-pdf-outfile=celtal_CI_Bird_outfile.pdf
+outfile=parastichopus_outfile.txt
+pdf-outfile=parastichopus_outfile.pdf
 use-M=YES
 plot=NO
 mathfile=mathfile
@@ -145,7 +220,7 @@ bayes-priors= THETA WEXPPRIOR: 0.0 0.01 0.1000000 0.01000
 bayes-priors= MIG WEXPPRIOR: 0.000100 100000.000000 50000000.000000 100000.000000 
 long-chains=1
 long-inc=100
-long-sample=50000
+long-sample=75000
 burn-in=20000
 heating=YES:1:{1,1.5,3,100000}
 heated-swap=YES
@@ -159,4 +234,3 @@ end
 
 ```
 
-Wrote out the data as nexus format and edited it manually to migrate format.
