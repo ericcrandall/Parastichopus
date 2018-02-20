@@ -256,9 +256,9 @@ bfcalcs<-function(df,ml="bezier.corrected"){
 Here I am going through the three runs and harvesting out the likelihoods into a likelists object.
 
 ```{r harvest_likelihoods}
-wd<-"?????"
+wd<-"~/datasets/parastichopus/"
 setwd(wd)
-
+likelists<-list()
 
 for(r in 1:3){
   wd1<-paste(wd,"models",r,sep="")
@@ -272,11 +272,11 @@ for(r in 1:3){
     l=1 #initialize l
     
     for(i in c("panmixia","island","2region1","2region2","south_step","sym_step")){ #i<-"sym_step"
-      wd3<-file.path(wd2,i)
+      wd3<-file.path(wd1,i)
       print(wd3)
       if(!file.exists(wd3)){next}
       setwd(wd3)
-      outfile<-scan(file=paste(f,"outfile.txt",sep="_"),what="character",sep="\n") #scan in the outfile, separating at each newline
+      outfile<-scan(file="parastichopus_outfile.txt",what="character",sep="\n") #scan in the outfile, separating at each newline
       
 
       
@@ -309,27 +309,21 @@ setwd(wd)
 ## Model Selection
 On each round, and then bind them into a list
 ```{r model_selection}
-modeltable1<-lapply(likelists[[6]],bfcalcs)
-modeltable2<-lapply(likelists[[7]],bfcalcs)
-modeltable3<-lapply(likelists[[8]],bfcalcs)
-modeltables<-list("round1"=modeltable1,"round2"=modeltable2,"round3"=modeltable3)
+modeltable1<-lapply(likelists,bfcalcs)
 
-head(modeltables[[1]],1)
 
 ```
 
 ## Plot marginal likelihood results from each of 3 runs
 ```{r}
 #plot model selection graphics (blue dots with lines) - lines denote confidence intervals
-m<-c("panmixia","hi_lo","1current","2currents","n.island","structure_panmixia","structure_currents","stepping.stone.1param","stepping.stone","empirical")
-m<-c("panmixia","hi_lo","1current","2currents","n.island","stepping.stone.1param","stepping.stone","empirical")
+m<- c("panmixia","island","2region1","2region2","south_step","sym_step")
 
 
-pdf(file = "thermodynamic_marginal_likelihoods_final.pdf",width=8.5,height=3)
+
 means<-list()
 #plots<-list()
-for(dataset in names(modeltables[[1]])){
-  likes<-rbind(cbind(modeltables[[1]][[dataset]],rep=1), cbind(modeltables[[2]][[dataset]],rep=2), cbind(modeltables[[3]][[dataset]], rep=3))
+  likes<-rbind(cbind(modeltable1[[1]],rep=1), cbind(modeltable1[[2]],rep=2), cbind(modeltable1[[3]], rep=3))
   likes$model<-factor(likes$model, m)
   likes<-likes[!(is.na(likes$model)),]
   
@@ -341,7 +335,6 @@ for(dataset in names(modeltables[[1]])){
 
     
   likes.mean<-data.frame(model=factor(m,m),y.mean,y.min,y.max,y.sd)
-  means[[dataset]]<-likes.mean
   
   #l<-ggplot(data=likes, aes(x=model,y=bezier.corrected,colour=factor(rep), 
    #                                 shape=factor(rep), size=20 ))
@@ -350,12 +343,11 @@ for(dataset in names(modeltables[[1]])){
   l<-l+geom_point(colour="blue", size=3)+
     geom_pointrange(data=likes.mean,y=y.mean,ymin=y.min,ymax=y.max, size=0.5)+
     scale_x_discrete(drop=FALSE)+
-    theme(axis.text.y = element_text(size=16),legend.position="none",axis.title.x=element_text(size=16),axis.title.y=element_blank(),plot.title=element_text(size=20))+ggtitle(dataset)+ylab("Marginal Log-Likelihood")+
+    theme(axis.text.y = element_text(size=16),legend.position="none",axis.title.x=element_text(size=16),axis.title.y=element_blank(),plot.title=element_text(size=20))+ggtitle("Parastichopus parvimensis")+ylab("Marginal Log-Likelihood")+
     coord_fixed(0.1)+ coord_flip()
   print(l)
 #  plots<-c(plots,l)
-}
-dev.off()
+
+
 ```
 
-# get rest of code from marginal_likelihood_final.Rmd
